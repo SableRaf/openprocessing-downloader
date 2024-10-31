@@ -1,0 +1,18 @@
+{
+  "name": "fetch-openprocessing-api",
+  "version": "1.0.0",
+  "main": "fetch-openprocessing.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "puppeteer": "^23.6.1",
+    "sanitize-filename": "^1.6.3"
+  }
+}
