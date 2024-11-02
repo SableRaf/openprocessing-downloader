@@ -13,6 +13,8 @@ const fetchSketchInfo = async (sketchId) => {
     try {
         const sketchInfo = {
             sketchId,
+            isFork: false,
+            author: '',
             codeParts: [],
             files: [],
             libraries: [],
@@ -31,6 +33,17 @@ const fetchSketchInfo = async (sketchId) => {
         // Determine the mode of the sketch
         sketchInfo.mode = sketchInfo.metadata.mode;
 
+        // Determine if the sketch is a fork
+        sketchInfo.isFork = sketchInfo.metadata.parentID !== null;
+
+        // Fetch the author of the sketch
+        const userResponse = await axios.get(`https://openprocessing.org/api/user/${sketchInfo.metadata.userID}`);
+        if (userResponse.status === 200 && userResponse.data) {
+            sketchInfo.author = userResponse.data.fullname;
+        } else {
+            console.error(`Unexpected response format for user ${sketchInfo.metadata.userID}`);
+        }
+
         // Emoji based on mode (processingjs, html, p5js, or applet)
         const modeEmoji = { processingjs: '🅿️', html: '🗂️', p5js: '🌸', applet: '📦' }[sketchInfo.mode] || '❓';
 
@@ -39,14 +52,14 @@ const fetchSketchInfo = async (sketchId) => {
         } else {
             console.log('-------------------------------------------------------------');
             console.log(`${modeEmoji} "${sketchInfo.metadata.title}" (ID: ${sketchId})`);
+            console.log(`🥚 by ${sketchInfo.author}`);
+            console.log(`🔗 https://openprocessing.org/sketch/${sketchId}`);
         }
 
         // Fetch the sketch code
         const codeResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}/code`);
         if (codeResponse.status === 200 && Array.isArray(codeResponse.data)) {
             sketchInfo.codeParts = codeResponse.data;
-            // Determine if the sketch is in HTML mode
-            sketchInfo.htmlMode = sketchInfo.metadata.mode === 'html';
         } else {
             console.error(`Unexpected response format for sketch code ${sketchId}`);
         }
@@ -94,6 +107,7 @@ const fetchSketchInfo = async (sketchId) => {
             console.error(`Error fetching libraries for sketch ${sketchId}:`, error);
         }
 
+        if(sketchInfo.isFork) console.log(`🍴 Fork of https://openprocessing.org/sketch/${sketchInfo.metadata.parentID}`);
 
         return sketchInfo;
     } catch (error) {

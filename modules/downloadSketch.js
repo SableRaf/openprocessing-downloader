@@ -15,7 +15,6 @@ const { generateIndexHtml } = require('./generateIndexHtml');
  * @param {number} sketchInfo.sketchId - The ID of the sketch.
  * @param {Array<Object>} sketchInfo.codeParts - The code parts of the sketch.
  * @param {Array<Object>} sketchInfo.files - The files associated with the sketch.
- * @param {boolean} sketchInfo.htmlMode - Indicates if the sketch is in HTML mode.
  * @param {Array<Object>} sketchInfo.libraries - The libraries associated with the sketch.
  * @param {Object} sketchInfo.metadata - The metadata of the sketch.
  * @returns {Promise<void>} A Promise that resolves when the sketch is downloaded.
@@ -90,10 +89,13 @@ const downloadSketch = async (sketchInfo) => {
         console.error("Error: 'sketchInfo.files' is missing or empty.");
     }
 
-
     // Generate index.html if not in HTML mode
-    if (!sketchInfo.htmlMode) {
-        generateIndexHtml(sketchInfo.metadata, sketchInfo.codeParts, sketchDir);
+    if (sketchInfo.metadata.mode){
+        if (sketchInfo.metadata.mode !== 'html') {
+            generateIndexHtml(sketchInfo.metadata, sketchInfo.codeParts, sketchDir);
+        }
+    } else {
+        console.error("Error: 'sketchInfo.metadata.mode' is missing.");
     }
 
     // Create metadata directory

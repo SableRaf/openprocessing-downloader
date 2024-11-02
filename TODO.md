@@ -1,5 +1,5 @@
--[] Add an option to skip forks
--[] Add author name to logging
+-[x] Add an option to skip forks
+-[x] Add author name to logging
 -[] Add an option to download a specific sketch by ID
 -[] Add an option to download assets or not
 -[] Download assets from AWS (using the fileBase URL)
