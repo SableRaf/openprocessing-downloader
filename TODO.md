@@ -1,0 +1,5 @@
+-[] Add an option to skip forks
+-[] Add an option to download assets or not
+-[] Download assets from AWS (using the fileBase URL)
+-[] Ask for confirmation before downloading
+-[] Add a progress bar

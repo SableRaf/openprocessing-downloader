@@ -1,8 +1,10 @@
+// modules/sketchDownloader.js
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const globals = require('../globals');
 const config = require('../config');
-const { ensureDirectoryExists, sanitizeFilename } = require('./utils');
+const { ensureDirectoryExists, sanitizeFilename, resolveAssetUrl } = require('./utils');
 const { generateIndexHtml } = require('./htmlGenerator');
 
 /**
@@ -19,7 +21,7 @@ const { generateIndexHtml } = require('./htmlGenerator');
  */
 const downloadSketch = async (sketchInfo) => {
     const sketchId = sketchInfo.sketchId;
-    const sketchDir = path.join(config.SAVE_DIR, `sketch_${sketchId}`);
+    const sketchDir = path.join(globals.SAVE_DIR, `sketch_${sketchId}`);
 
     // Ensure the sketch directory exists
     ensureDirectoryExists(sketchDir);
@@ -28,7 +30,8 @@ const downloadSketch = async (sketchInfo) => {
     const savedCodePartsFilenames = [];
 
     sketchInfo.codeParts.forEach((codeBlock, index) => {
-        let codeFileName = path.basename(codeBlock.title);
+        const name = codeBlock.title || `part_${index + 1}`;
+        let codeFileName = path.basename(name);
 
         // Ensure the file has an extension, default to .js if missing
         let fileExtension = path.extname(codeFileName);
@@ -46,13 +49,55 @@ const downloadSketch = async (sketchInfo) => {
         savedCodePartsFilenames.push(codeFileName);
     });
 
+    // Download assets from fileBase URL to sketch directory
+    if (config.DOWNLOAD_ASSETS && sketchInfo.files) {
+        const assetBaseUrl = sketchInfo.metadata?.fileBase;
+
+        if (assetBaseUrl) {
+            sketchInfo.files.forEach(async (file) => {
+                const filename = file?.name;
+                console.log(`Asset name: ${filename}`);
+
+                if (filename) {
+                    let assetUrl;
+
+                    try {
+                        // Resolve the full URL for the asset
+                        assetUrl = await resolveAssetUrl(assetBaseUrl, filename);
+                        if (!assetUrl) {
+                            console.error(`Could not resolve URL for ${filename}`);
+                            return;
+                        }
+
+                        // Set the local file path to the sketch directory
+                        const assetFilePath = path.join(sketchDir, filename);
+
+                        // Download and save the asset
+                        const response = await axios.get(assetUrl, { responseType: 'arraybuffer' });
+                        fs.writeFileSync(assetFilePath, response.data);
+                        console.log(`Downloaded and saved: ${filename}`);
+                    } catch (error) {
+                        console.error(`Error downloading asset from URL: ${assetUrl}`);
+                    }
+                } else {
+                    console.warn("Warning: A file in 'sketchInfo.files' is missing a 'filename' property.");
+                }
+            });
+        } else {
+            console.error("Error: 'fileBase' URL is missing in sketch metadata.");
+        }
+    } else {
+        console.error("Error: 'sketchInfo.files' is missing or empty.");
+    }
+
+
     // Generate index.html if not in HTML mode
     if (!sketchInfo.htmlMode) {
         generateIndexHtml(sketchInfo.metadata, sketchInfo.codeParts, sketchDir);
-    } 
+    }
 
     // Create metadata directory
-    const metadataDir = path.join(sketchDir, config.META_DIR);
+    const metadataDir = path.join(sketchDir, globals.META_DIR);
     ensureDirectoryExists(metadataDir);
 
     // Save metadata to a JSON file
@@ -61,7 +106,7 @@ const downloadSketch = async (sketchInfo) => {
 
     // Download thumbnail if available
     if (sketchInfo.metadata.visualID) {
-        const imageUrl = config.THUMBNAIL_URL_TEMPLATE.replace('{visualID}', sketchInfo.metadata.visualID);
+        const imageUrl = globals.THUMBNAIL_URL_TEMPLATE.replace('{visualID}', sketchInfo.metadata.visualID);
         const imageFilePath = path.join(metadataDir, 'thumbnail.jpg');
         try {
             const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });

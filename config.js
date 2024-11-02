@@ -1,16 +1,17 @@
 // config.js
-const path = require('path');
 
-const SEARCH_QUERY = 'WCCChallenge';
+const Mode = {
+    SEARCH_BY_TERM: 'SEARCH_BY_TERM',
+    SEARCH_BY_USER_ID: 'SEARCH_BY_USER_ID',
+    SEARCH_BY_CURATION_ID: 'SEARCH_BY_CURATION_ID',
+};
 
 module.exports = {
-    SEARCH_URL: `https://openprocessing.org/browse/?time=anytime&type=all&q=${encodeURIComponent(SEARCH_QUERY)}`,
-    SAVE_DIR: path.join(__dirname, 'downloads'),
-    META_DIR: 'metadata',
-    DEFAULT_DIR: path.join(__dirname, 'data/default'),
-    DEFAULT_HTML: path.join(__dirname, 'data/default/index.html'),
-    DEFAULT_CSS: path.join(__dirname, 'data/default/style.css'),
-    THUMBNAIL_URL_TEMPLATE: 'https://openprocessing-usercontent.s3.amazonaws.com/thumbnails/visualThumbnail{visualID}@2x.jpg',
-    SHOW_MORE_SELECTOR: '#showMoreButton',
-    HEADLESS: true, // Set to false if you want to see the browser actions
+    SEARCH_MODE: Mode.SEARCH_BY_CURATION_ID, // Used to determine the search mode (search term, user, or curation)
+    SEARCH_TERM: 'WCCChallenge', // Set to a specific search term (used if SEARCH_MODE is Mode.SEARCH_BY_TERM)
+    USER_ID: '22192', // Set to a specific user ID (used if SEARCH_MODE is Mode.SEARCH_BY_USER_ID)
+    CURATION_ID: '78544', // Set to a specific curation ID (used if SEARCH_MODE is Mode.SEARCH_BY_CURATION_ID)
+    DOWNLOAD_ASSETS: true, // Set to true to download assets (images, sounds, etc.)
+    VERBOSE: true, // Set to true to log additional information
+    Mode, // Exporting Mode enum for other modules
 };

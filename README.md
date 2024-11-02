@@ -14,11 +14,7 @@ A Node.js tool to scrape and download sketches from OpenProcessing based on a se
 
 ## Usage
 
-1. **Set the search query** in `config.js` (default is `WCCChallenge`):
-
-   ```javascript
-   const SEARCH_QUERY = 'Your Search Term';
-   ```
+1. **Set the parameters** in `config.js`:
 
 2. **Run the script**:
 
@@ -27,7 +23,7 @@ A Node.js tool to scrape and download sketches from OpenProcessing based on a se
    ```
 
    This will:
-   - Scrape sketch IDs matching the search term.
+   - List the sketch IDs matching the parameters in `config.js`.
    - Download each sketch’s metadata, code, and assets.
    - Save everything to the `downloads/` folder.
 
