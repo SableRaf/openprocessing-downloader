@@ -1,5 +1,9 @@
+-[] Include LICENSE info to downloaded sketches
 -[] Add an option to skip forks
+-[] Add author name to logging
+-[] Add an option to download a specific sketch by ID
 -[] Add an option to download assets or not
 -[] Download assets from AWS (using the fileBase URL)
 -[] Ask for confirmation before downloading
 -[] Add a progress bar
+-[] Add support for pagination (for large collections or resuming downloads)
