@@ -1,7 +1,6 @@
-// modules/fetchMetadata.js
-
 const axios = require('axios');
 const config = require('../config');
+const logger = require('./logger');
 
 /**
  * Gathers information for a sketch from the OpenProcessing API.
@@ -15,10 +14,16 @@ const fetchSketchInfo = async (sketchId) => {
             sketchId,
             isFork: false,
             author: '',
+            title: '',
             codeParts: [],
             files: [],
             libraries: [],
             mode: '',
+            parent: {
+                sketchID: null,
+                author: '',
+                title: '',
+            },
             metadata: {}
         };
 
@@ -27,33 +32,30 @@ const fetchSketchInfo = async (sketchId) => {
         if (metadataResponse.status === 200 && metadataResponse.data) {
             sketchInfo.metadata = metadataResponse.data;
         } else {
-            console.error(`Unexpected response format for metadata of sketch ${sketchId}`);
+            logger.logError(`Unexpected response format for metadata of sketch ${sketchId}`);
         }
 
-        // Determine the mode of the sketch
         sketchInfo.mode = sketchInfo.metadata.mode;
-
-        // Determine if the sketch is a fork
         sketchInfo.isFork = sketchInfo.metadata.parentID !== null;
+        sketchInfo.parent.sketchID = sketchInfo.metadata.parentID;
+
+        // fetch parent sketch info
+        if (sketchInfo.isFork) {
+            const parentMetadataResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchInfo.parent.sketchID}`);
+            if (parentMetadataResponse.status === 200 && parentMetadataResponse.data) {
+                sketchInfo.parent.title = parentMetadataResponse.data.title;
+                sketchInfo.parent.author = await fetchUserInfo(parentMetadataResponse.data.userID).then(user => user.fullname);
+            } else {
+                logger.logError(`Unexpected response format for metadata of parent sketch ${sketchInfo.parent.sketchID}`);
+            }
+        }
 
         // Fetch the author of the sketch
         const userResponse = await axios.get(`https://openprocessing.org/api/user/${sketchInfo.metadata.userID}`);
         if (userResponse.status === 200 && userResponse.data) {
             sketchInfo.author = userResponse.data.fullname;
         } else {
-            console.error(`Unexpected response format for user ${sketchInfo.metadata.userID}`);
-        }
-
-        // Emoji based on mode (processingjs, html, p5js, or applet)
-        const modeEmoji = { processingjs: '🅿️', html: '🗂️', p5js: '🌸', applet: '📦' }[sketchInfo.mode] || '❓';
-
-        if (sketchInfo.metadata.title === undefined) {
-            console.log(`No title found.`);
-        } else {
-            console.log('-------------------------------------------------------------');
-            console.log(`${modeEmoji} "${sketchInfo.metadata.title}" (ID: ${sketchId})`);
-            console.log(`🥚 by ${sketchInfo.author}`);
-            console.log(`🔗 https://openprocessing.org/sketch/${sketchId}`);
+            logger.logError(`Unexpected response format for user ${sketchInfo.metadata.userID}`);
         }
 
         // Fetch the sketch code
@@ -61,14 +63,7 @@ const fetchSketchInfo = async (sketchId) => {
         if (codeResponse.status === 200 && Array.isArray(codeResponse.data)) {
             sketchInfo.codeParts = codeResponse.data;
         } else {
-            console.error(`Unexpected response format for sketch code ${sketchId}`);
-        }
-
-        if (config.VERBOSE === true) {
-            console.log(`   📁Files (${sketchInfo.codeParts.length}):`);
-            sketchInfo.codeParts.forEach(part => {
-                console.log(`      📄${part.title}`);
-            });
+            logger.logError(`Unexpected response format for sketch code ${sketchId}`);
         }
 
         // Fetch the files associated with the sketch
@@ -76,17 +71,11 @@ const fetchSketchInfo = async (sketchId) => {
             const filesResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}/files?limit=100&offset=0`);
             if (filesResponse.status === 200 && Array.isArray(filesResponse.data)) {
                 sketchInfo.files = filesResponse.data;
-                if (config.VERBOSE) {
-                    console.log(`   📁Assets (${sketchInfo.files.length}):`);
-                    sketchInfo.files.forEach(file => {
-                        console.log(`      📄${file.name}`);
-                    });
-                }
             } else {
-                console.error(`Unexpected response format for files`);
+                logger.logError(`Unexpected response format for files`);
             }
         } catch (error) {
-            console.error(`Error fetching files for sketch ${sketchId}:`, error);
+            logger.logError(`Error fetching files for sketch ${sketchId}`, error);
         }
 
         // Fetch the libraries associated with the sketch
@@ -94,24 +83,16 @@ const fetchSketchInfo = async (sketchId) => {
             const librariesResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}/libraries?limit=100&offset=0`);
             if (librariesResponse.status === 200 && Array.isArray(librariesResponse.data)) {
                 sketchInfo.libraries = librariesResponse.data;
-                if (config.VERBOSE) {
-                    console.log(`   📚Libraries (${sketchInfo.libraries.length}):`);
-                    sketchInfo.libraries.forEach(library => {
-                        console.log(`      🔗 ${library.url}`);
-                    });
-                }
             } else {
-                console.error(`Unexpected response format for libraries`);
+                logger.logError(`Unexpected response format for libraries`);
             }
         } catch (error) {
-            console.error(`Error fetching libraries for sketch ${sketchId}:`, error);
+            logger.logError(`Error fetching libraries for sketch ${sketchId}`, error);
         }
-
-        if(sketchInfo.isFork) console.log(`🍴 Fork of https://openprocessing.org/sketch/${sketchInfo.metadata.parentID}`);
 
         return sketchInfo;
     } catch (error) {
-        console.error(`Error gathering information:`, error.message);
+        logger.logError(`Error gathering information`, error);
         return null;
     }
 };
@@ -128,12 +109,12 @@ function fetchCurationInfo(curationId) {
             if (response.status === 200 && response.data) {
                 return response.data;
             } else {
-                console.error(`Unexpected response format for curation ${curationId}`);
+                logger.logError(`Unexpected response format for curation ${curationId}`);
                 return {};
             }
         })
         .catch(error => {
-            console.error(`Error fetching curation ${curationId}:`, error.message);
+            logger.logError(`Error fetching curation ${curationId}`, error);
             return {};
         });
 }
@@ -150,12 +131,12 @@ function fetchUserInfo(userId) {
             if (response.status === 200 && response.data) {
                 return response.data;
             } else {
-                console.error(`Unexpected response format for user ${userId}`);
+                logger.logError(`Unexpected response format for user ${userId}`);
                 return {};
             }
         })
         .catch(error => {
-            console.error(`Error fetching user ${userId}:`, error.message);
+            logger.logError(`Error fetching user ${userId}`, error);
             return {};
         });
 }
