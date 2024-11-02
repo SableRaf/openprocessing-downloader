@@ -1,5 +1,5 @@
 const globals = require('./globals');
-const { collectSketchIds } = require('./modules/listSketchIDs');
+const { collectSketchIds } = require('./modules/listSketches');
 const { fetchSketchInfo } = require('./modules/fetchMetadata');
 const { downloadSketch } = require('./modules/downloadSketch');
 const { ensureDirectoryExists } = require('./modules/utils');
