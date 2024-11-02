@@ -1,11 +1,13 @@
-// modules/sketchDownloader.js
+// modules/downloadSketch.js
+
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+
 const globals = require('../globals');
 const config = require('../config');
 const { ensureDirectoryExists, sanitizeFilename, resolveAssetUrl } = require('./utils');
-const { generateIndexHtml } = require('./htmlGenerator');
+const { generateIndexHtml } = require('./generateIndexHtml');
 
 /**
  * Downloads the sketch code parts, metadata, and thumbnail image (if available) to the specified directory.
@@ -56,7 +58,6 @@ const downloadSketch = async (sketchInfo) => {
         if (assetBaseUrl) {
             sketchInfo.files.forEach(async (file) => {
                 const filename = file?.name;
-                console.log(`Asset name: ${filename}`);
 
                 if (filename) {
                     let assetUrl;
@@ -75,7 +76,6 @@ const downloadSketch = async (sketchInfo) => {
                         // Download and save the asset
                         const response = await axios.get(assetUrl, { responseType: 'arraybuffer' });
                         fs.writeFileSync(assetFilePath, response.data);
-                        console.log(`Downloaded and saved: ${filename}`);
                     } catch (error) {
                         console.error(`Error downloading asset from URL: ${assetUrl}`);
                     }

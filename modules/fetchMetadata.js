@@ -1,4 +1,5 @@
-// modules/sketchInfoFetcher.js
+// modules/fetchMetadata.js
+
 const axios = require('axios');
 const config = require('../config');
 

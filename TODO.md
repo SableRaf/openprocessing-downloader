@@ -1,4 +1,3 @@
--[] Include LICENSE info to downloaded sketches
 -[] Add an option to skip forks
 -[] Add author name to logging
 -[] Add an option to download a specific sketch by ID

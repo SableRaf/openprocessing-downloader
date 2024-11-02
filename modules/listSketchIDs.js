@@ -1,33 +1,26 @@
-// modules/sketchCollector.js
+// modules/listSketchIDs.js
+
 const axios = require('axios');
 const puppeteer = require('puppeteer');
-const { fetchUserInfo, fetchSketchInfo, fetchCurationInfo } = require('./metadataFetcher');
+
+const globals = require('../globals');
+const config = require('../config');
+const { fetchUserInfo, fetchSketchInfo, fetchCurationInfo } = require('./fetchMetadata');
 
 /**
  * Collect sketch IDs based on search term, user ID, or curation ID.
- * @param {Object} options - Configuration options.
- * @param {string} options.searchMode - Mode indicating whether to search by term, user ID, or curation ID.
- * @param {string} options.searchQuery - Search term.
- * @param {string} options.searchUrlBase - Base URL for search queries.
- * @param {string} options.userId - User ID for fetching sketches.
- * @param {string} options.userSketchesUrlBase - Base URL for fetching user sketches.
- * @param {string} options.curationId - Curation ID for fetching curated sketches.
- * @param {string} options.curationUrlBase - Base URL for fetching curated sketches.
- * @param {number} options.limit - Number of sketches to fetch per page.
- * @param {number} options.offset - Starting offset for pagination.
- * @param {boolean} options.headless - Headless mode for Puppeteer.
  * @returns {Promise<Array<string>>} - A promise that resolves with an array of sketch IDs.
  */
-const collectSketchIds = async ({ searchMode, searchQuery, searchUrlBase, userId, userSketchesUrlBase, curationId, curationUrlBase, limit, offset, headless }) => {
-    switch (searchMode) {
+const collectSketchIds = async () => {
+    switch (config.SEARCH_MODE) {
         case 'SEARCH_BY_USER_ID':
-            return fetchSketchIdsByUserId(userId, userSketchesUrlBase);
+            return fetchSketchIdsByUserId(config.USER_ID, globals.USER_SKETCHES_URL_BASE);
         case 'SEARCH_BY_TERM':
-            return fetchSketchIdsBySearch(searchQuery, searchUrlBase, headless);
+            return fetchSketchIdsBySearch(config.SEARCH_QUERY, globals.SEARCH_URL_BASE, globals.HEADLESS);
         case 'SEARCH_BY_CURATION_ID':
-            return fetchSketchIdsByCuration(curationId, curationUrlBase, limit, offset);
+            return fetchSketchIdsByCuration(config.CURATION_ID, globals.CURATION_URL_BASE);
         default:
-            console.error(`Invalid mode specified: ${searchMode}`);
+            console.error(`Invalid mode specified: ${config.SEARCH_MODE}`);
             return [];
     }
 };
