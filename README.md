@@ -39,6 +39,34 @@ A Node.js tool to back up OpenProcessing sketches to your local machine. Downloa
    - Download each sketch’s metadata, code, and assets.
    - Save everything to the `downloads/` folder.
 
+### Command line arguments
+
+You can also pass arguments via command line:
+
+1. **Search by Term**:
+   ```bash
+   node main.js --term "nature"
+   ```
+   This sets `SEARCH_MODE` to `SEARCH_BY_TERM` and uses `"nature"` as the search term.
+
+2. **Search by User ID**:
+   ```bash
+   node main.js --user 12345
+   ```
+   This sets `SEARCH_MODE` to `SEARCH_BY_USER_ID` and uses `12345` as the user ID.
+
+3. **Enable Verbose Mode**:
+   ```bash
+   node main.js --verbose
+   ```
+   This sets `VERBOSE` to `true`.
+
+4. **Download Assets and Skip Forks**:
+   ```bash
+   node main.js --downloadAssets --skipForks
+   ```
+   This sets both `DOWNLOAD_ASSETS` and `SKIP_FORKS` to `true`.
+
 ## Limitations
 
 - Private sketches can not be accessed via the API.

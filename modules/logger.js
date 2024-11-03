@@ -34,7 +34,7 @@ function logAssets(files) {
         console.log(`   📄${file.name}`);
     });
     if (files.length > 0 && config.DOWNLOAD_ASSETS == false && config.VERBOSE) { 
-        console.warn(`Asset downloading is disabled. Set DOWNLOAD_ASSETS to true in config.js to enable.`); 
+        console.warn(`Asset downloading is disabled. To enable, edit config.js or use the --downloadAssets flag.`); 
     }
 }
 
