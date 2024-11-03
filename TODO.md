@@ -3,6 +3,7 @@
 -[x] Separate logging from logic
 -[x] Add an option to download a specific sketch by ID
 -[] Add an option to download assets or not
+-[] Add command line arguments for options
 -[] Download assets from AWS (using the fileBase URL)
 -[] Ask for confirmation before downloading
 -[] Add a progress bar
