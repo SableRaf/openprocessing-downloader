@@ -27,12 +27,16 @@ const fetchSketchInfo = async (sketchId) => {
             metadata: {}
         };
 
-        // Fetch metadata for the sketch
-        const metadataResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}`);
-        if (metadataResponse.status === 200 && metadataResponse.data) {
-            sketchInfo.metadata = metadataResponse.data;
-        } else {
-            logger.logError(`Unexpected response format for metadata of sketch ${sketchId}`);
+        try {
+            // Fetch metadata for the sketch
+            const metadataResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}`);
+            if (metadataResponse.status === 200 && metadataResponse.data) {
+                sketchInfo.metadata = metadataResponse.data;
+            } else {
+                logger.logError(`Unexpected response format for metadata of sketch ${sketchId}`);
+            }
+        } catch (error) {
+            logger.logError(`Error fetching metadata for sketch ${sketchId}:`, error);
         }
 
         sketchInfo.mode = sketchInfo.metadata.mode;
@@ -41,29 +45,41 @@ const fetchSketchInfo = async (sketchId) => {
 
         // fetch parent sketch info
         if (sketchInfo.isFork) {
-            const parentMetadataResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchInfo.parent.sketchID}`);
-            if (parentMetadataResponse.status === 200 && parentMetadataResponse.data) {
-                sketchInfo.parent.title = parentMetadataResponse.data.title;
-                sketchInfo.parent.author = await fetchUserInfo(parentMetadataResponse.data.userID).then(user => user.fullname);
-            } else {
-                logger.logError(`Unexpected response format for metadata of parent sketch ${sketchInfo.parent.sketchID}`);
+            try {
+                const parentMetadataResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchInfo.parent.sketchID}`);
+                if (parentMetadataResponse.status === 200 && parentMetadataResponse.data) {
+                    sketchInfo.parent.title = parentMetadataResponse.data.title;
+                    sketchInfo.parent.author = await fetchUserInfo(parentMetadataResponse.data.userID).then(user => user.fullname);
+                } else {
+                    logger.logError(`Unexpected response format for metadata of parent sketch ${sketchInfo.parent.sketchID}`);
+                }
+            } catch (error) {
+                logger.logError(`Error fetching metadata for parent sketch ${sketchInfo.parent.sketchID}:`, error);
             }
         }
 
         // Fetch the author of the sketch
-        const userResponse = await axios.get(`https://openprocessing.org/api/user/${sketchInfo.metadata.userID}`);
-        if (userResponse.status === 200 && userResponse.data) {
-            sketchInfo.author = userResponse.data.fullname;
-        } else {
-            logger.logError(`Unexpected response format for user ${sketchInfo.metadata.userID}`);
+        try {
+            const userResponse = await axios.get(`https://openprocessing.org/api/user/${sketchInfo.metadata.userID}`);
+            if (userResponse.status === 200 && userResponse.data) {
+                sketchInfo.author = userResponse.data.fullname;
+            } else {
+                logger.logError(`Unexpected response format for user ${sketchInfo.metadata.userID}`);
+            }
+        } catch (error) {
+            logger.logError(`Error fetching user ${sketchInfo.metadata.userID}:`, error);
         }
 
         // Fetch the sketch code
-        const codeResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}/code`);
-        if (codeResponse.status === 200 && Array.isArray(codeResponse.data)) {
-            sketchInfo.codeParts = codeResponse.data;
-        } else {
-            logger.logError(`Unexpected response format for sketch code ${sketchId}`);
+        try {
+            const codeResponse = await axios.get(`https://openprocessing.org/api/sketch/${sketchId}/code`);
+            if (codeResponse.status === 200 && Array.isArray(codeResponse.data)) {
+                sketchInfo.codeParts = codeResponse.data;
+            } else {
+                logger.logError(`Unexpected response format for sketch code ${sketchId}`);
+            }
+        } catch (error) {
+            logger.logError(`Error fetching sketch code ${sketchId}:`, error);
         }
 
         // Fetch the files associated with the sketch
