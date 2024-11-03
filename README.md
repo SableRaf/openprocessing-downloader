@@ -16,7 +16,7 @@ A Node.js tool to scrape and download sketches from OpenProcessing based on a se
 
 1. **Configure the parameters** in `config.js`:
    - `SEARCH_MODE`: Choose a search mode from:
-     - `SEARCH_BY_TERM`: Download sketches by a specific search term.
+     - `SEARCH_BY_TERM`: Download sketches matching a specific search term.
      - `SEARCH_BY_USER_ID`: Download sketches created by a specific user.
      - `SEARCH_BY_CURATION_ID`: Download sketches within a specific curated collection.
      - `SEARCH_BY_SKETCH_ID`: Download a specific sketch by ID.
@@ -38,6 +38,10 @@ A Node.js tool to scrape and download sketches from OpenProcessing based on a se
    - List the sketch IDs matching the parameters in `config.js`.
    - Download each sketch’s metadata, code, and assets.
    - Save everything to the `downloads/` folder.
+
+## Limitations
+
+- Private sketches can not be accessed via the API.
 
 ## License
 
