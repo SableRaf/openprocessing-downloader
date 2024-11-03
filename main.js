@@ -25,13 +25,14 @@ const main = async () => {
         logger.logSeparator();
         logger.logSketchInfo(sketchInfo);
     
+        // Skip forks if configured
         if (sketchInfo.isFork && config.SKIP_FORKS) {
             if (config.VERBOSE) {
                 logger.lineBreak();
                 logger.logParentInfo(sketchInfo.parent);
+                logger.lineBreak();
+                logger.logMessage(`👻 Skipping fork. This sketch will not be downloaded.`);
             }
-            logger.lineBreak();
-            logger.logMessage(`👻 Skipping fork. This sketch will not be downloaded.`);
             continue;
         }
     
