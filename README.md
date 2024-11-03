@@ -1,6 +1,6 @@
 # OpenProcessing Downloader
 
-A Node.js tool to scrape and download sketches from OpenProcessing based on a search term.
+A Node.js tool to back up OpenProcessing sketches to your local machine. Download code, assets, and metadata for all public sketches in a collection, all sketches by a specific user, or even a specific sketch using its ID.
 
 ## Installation
 
