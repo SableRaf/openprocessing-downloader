@@ -13,7 +13,7 @@ module.exports = {
     USER_ID: '22192', // Set to a specific user ID (used if SEARCH_MODE is Mode.SEARCH_BY_USER_ID)
     CURATION_ID: '78544', // Set to a specific curation ID (used if SEARCH_MODE is Mode.SEARCH_BY_CURATION_ID)
     SKETCH_ID: '2063664', // Set to a specific sketch ID (used if SEARCH_MODE is Mode.SEARCH_BY_SKETCH_ID)
-    DOWNLOAD_ASSETS: true, // Set to true to download assets (images, sounds, etc.)
+    DOWNLOAD_ASSETS: false, // Set to true to download assets (images, sounds, etc.)
     SKIP_FORKS: false, // Set to true to skip downloading forks of sketches
     VERBOSE: true, // Set to true to log additional information
     Mode, // Exporting Mode enum for other modules

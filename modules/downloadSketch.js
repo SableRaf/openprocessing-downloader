@@ -50,44 +50,46 @@ const downloadSketch = async (sketchInfo) => {
         savedCodePartsFilenames.push(codeFileName);
     });
 
-    // Download assets from fileBase URL to sketch directory
-    if (config.DOWNLOAD_ASSETS && sketchInfo.files) {
-        const assetBaseUrl = sketchInfo.metadata?.fileBase;
+     // Only proceed with asset downloading if DOWNLOAD_ASSETS is true
+     if (config.DOWNLOAD_ASSETS) {
+        if (sketchInfo.files) {
+            const assetBaseUrl = sketchInfo.metadata?.fileBase;
 
-        if (assetBaseUrl) {
-            sketchInfo.files.forEach(async (file) => {
-                const filename = file?.name;
+            if (assetBaseUrl) {
+                sketchInfo.files.forEach(async (file) => {
+                    const filename = file?.name;
 
-                if (filename) {
-                    let assetUrl;
+                    if (filename) {
+                        let assetUrl;
 
-                    try {
-                        // Resolve the full URL for the asset
-                        assetUrl = await resolveAssetUrl(assetBaseUrl, filename);
-                        if (!assetUrl) {
-                            console.error(`Could not resolve URL for ${filename}`);
-                            return;
+                        try {
+                            // Resolve the full URL for the asset
+                            assetUrl = await resolveAssetUrl(assetBaseUrl, filename);
+                            if (!assetUrl) {
+                                console.error(`Could not resolve URL for ${filename}`);
+                                return;
+                            }
+
+                            // Set the local file path to the sketch directory
+                            const assetFilePath = path.join(sketchDir, filename);
+
+                            // Download and save the asset
+                            const response = await axios.get(assetUrl, { responseType: 'arraybuffer' });
+                            fs.writeFileSync(assetFilePath, response.data);
+                        } catch (error) {
+                            console.error(`Error downloading asset from URL: ${assetUrl}`);
                         }
-
-                        // Set the local file path to the sketch directory
-                        const assetFilePath = path.join(sketchDir, filename);
-
-                        // Download and save the asset
-                        const response = await axios.get(assetUrl, { responseType: 'arraybuffer' });
-                        fs.writeFileSync(assetFilePath, response.data);
-                    } catch (error) {
-                        console.error(`Error downloading asset from URL: ${assetUrl}`);
+                    } else {
+                        console.warn("Warning: A file in 'sketchInfo.files' is missing a 'filename' property.");
                     }
-                } else {
-                    console.warn("Warning: A file in 'sketchInfo.files' is missing a 'filename' property.");
-                }
-            });
+                });
+            } else {
+                console.error("Error: 'fileBase' URL is missing in sketch metadata.");
+            }
         } else {
-            console.error("Error: 'fileBase' URL is missing in sketch metadata.");
+            console.error("Error: 'sketchInfo.files' is missing or empty.");
         }
-    } else {
-        console.error("Error: 'sketchInfo.files' is missing or empty.");
-    }
+    } 
 
     // Generate index.html if not in HTML mode
     if (sketchInfo.metadata.mode){

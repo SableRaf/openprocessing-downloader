@@ -1,5 +1,7 @@
 // modules/logger.js
 
+const config = require('../config');
+
 /**
  * Logs metadata information about a sketch.
  * @param {Object} sketchInfo - The sketch information object.
@@ -31,6 +33,9 @@ function logAssets(files) {
     files.forEach(file => {
         console.log(`   📄${file.name}`);
     });
+    if (files.length > 0 && config.DOWNLOAD_ASSETS == false && config.VERBOSE) { 
+        console.warn(`Asset downloading is disabled. Set DOWNLOAD_ASSETS to true in config.js to enable.`); 
+    }
 }
 
 /**
@@ -75,7 +80,7 @@ function lineBreak(length = 1) {
  * @param {string} char - Character to repeat.
  * @param {number} length - Number of characters to log.
  */
-function logSeparator(length = 60, char = '-', ) {
+function logSeparator(length = 60, char = '-',) {
     console.log(char.repeat(length));
 }
 
