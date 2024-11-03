@@ -43,6 +43,10 @@ A Node.js tool to scrape and download sketches from OpenProcessing based on a se
 
 - Private sketches can not be accessed via the API.
 
+## Acknowledgements
+
+This script is possible thanks to the [OpenProcessing API](https://openprocessing.org/api). Thanks to [Sinan Ascioglu](https://www.wiredpieces.com/) for creating OpenProcessing and its API.
+
 ## License
 
 This project is licensed under the **GNU General Public License v2.0 or later**.
