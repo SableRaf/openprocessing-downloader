@@ -5,6 +5,7 @@ const puppeteer = require('puppeteer');
 
 const globals = require('../globals');
 const config = require('../config');
+const logger = require('./logger');
 const { fetchUserInfo, fetchSketchInfo, fetchCurationInfo } = require('./fetchMetadata');
 
 /**
@@ -16,9 +17,12 @@ const collectSketchIds = async () => {
         case 'SEARCH_BY_USER_ID':
             return fetchSketchIdsByUserId(config.USER_ID, globals.USER_SKETCHES_URL_BASE);
         case 'SEARCH_BY_TERM':
-            return fetchSketchIdsBySearch(config.SEARCH_QUERY, globals.SEARCH_URL_BASE, globals.HEADLESS);
+            return fetchSketchIdsBySearch(config.SEARCH_TERM, globals.SEARCH_URL_BASE, globals.HEADLESS);
         case 'SEARCH_BY_CURATION_ID':
             return fetchSketchIdsByCuration(config.CURATION_ID, globals.CURATION_URL_BASE);
+        case 'SEARCH_BY_SKETCH_ID':
+            logger.logMessage(`🔍 Fetching sketch with ID: ${config.SKETCH_ID}`);
+            return [config.SKETCH_ID];
         default:
             console.error(`Invalid mode specified: ${config.SEARCH_MODE}`);
             return [];

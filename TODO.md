@@ -1,7 +1,7 @@
 -[x] Add an option to skip forks
 -[x] Add author name to logging
 -[x] Separate logging from logic
--[] Add an option to download a specific sketch by ID
+-[x] Add an option to download a specific sketch by ID
 -[] Add an option to download assets or not
 -[] Download assets from AWS (using the fileBase URL)
 -[] Ask for confirmation before downloading
