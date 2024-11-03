@@ -40,7 +40,7 @@ const fetchSketchInfo = async (sketchId) => {
         }
 
         sketchInfo.mode = sketchInfo.metadata.mode;
-        sketchInfo.isFork = sketchInfo.metadata.parentID !== null;
+        sketchInfo.isFork = sketchInfo.metadata.parentID != null && sketchInfo.metadata.parentID !== 0 && sketchInfo.metadata.parentID !== "0";
         sketchInfo.parent.sketchID = sketchInfo.metadata.parentID;
 
         // fetch parent sketch info
