@@ -1,4 +1,5 @@
 const yargs = require('yargs');
+const inquirer = require('inquirer');
 const globals = require('./globals');
 const config = require('./config');
 const logger = require('./modules/logger');
@@ -93,6 +94,21 @@ const main = async () => {
 
     if(!config.DOWNLOAD_ASSETS){
         logger.warn(`🚨 Asset downloading is disabled.`);
+    }
+
+    // Ask for user confirmation before downloading
+    const { confirmDownload } = await inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'confirmDownload',
+            message: `Do you want to download ${sketchIds.length} sketches?`,
+            default: false,
+        }
+    ]);
+
+    if (!confirmDownload) {
+        console.log('❌ Download cancelled by user.');
+        return;
     }
 
     let processedCount = 0;
