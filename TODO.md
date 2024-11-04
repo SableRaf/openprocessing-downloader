@@ -8,6 +8,7 @@
 -[x] Handle sketches with hidden code
 -[x] Do no count sketches for the total downloaded if they are skipped
 -[x] Ask for confirmation before downloading
+-[ ] Handle the case where the sketch is already downloaded
 -[ ] Search by term sometimes fails silently and returns 0 sketches even though sketches exist.
 -[ ] Add a progress bar
 -[ ] Add support for pagination (for large collections or resuming downloads)
