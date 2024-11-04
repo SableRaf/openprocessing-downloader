@@ -90,7 +90,12 @@ function logSeparator(length = 60, char = '-',) {
  * @param {Error} error - Error object.
  */
 function logError(message, error) {
-    console.error(`${message}:`, error.message);
+    const errorMsg = error && error.message ? error.message : '';
+    if (errorMsg) {
+        console.error(`${message}: ${errorMsg}`);
+    } else {
+        console.error(`${message}`);
+    }
 }
 
 module.exports = {
