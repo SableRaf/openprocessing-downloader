@@ -2,9 +2,12 @@
 -[x] Add author name to logging
 -[x] Separate logging from logic
 -[x] Add an option to download a specific sketch by ID
--[] Add an option to download assets or not
--[] Add command line arguments for options
--[] Download assets from AWS (using the fileBase URL)
--[] Ask for confirmation before downloading
--[] Add a progress bar
--[] Add support for pagination (for large collections or resuming downloads)
+-[x] Add an option to download assets or not
+-[x] Add command line arguments for options
+-[x] Download assets from AWS (using the fileBase URL)
+-[x] Handle sketches with hidden code
+-[x] Do no count sketches for the total downloaded if they are skipped
+-[ ] Ask for confirmation before downloading
+-[ ] Search by term sometimes fails silently and returns 0 sketches even though sketches exist.
+-[ ] Add a progress bar
+-[ ] Add support for pagination (for large collections or resuming downloads)
