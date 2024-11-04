@@ -13,4 +13,5 @@ module.exports = {
     THUMBNAIL_URL_TEMPLATE: 'https://openprocessing-usercontent.s3.amazonaws.com/thumbnails/visualThumbnail{visualID}@2x.jpg',
     SHOW_MORE_SELECTOR: '#showMoreButton',
     HEADLESS: true,
+    HIDDEN_CODE_MESSAGE: 'Sketch source code is hidden.',
 };

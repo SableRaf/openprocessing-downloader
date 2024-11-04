@@ -89,7 +89,13 @@ const main = async () => {
 
     // Collect sketch IDs based on search mode
     const sketchIds = await collectSketchIds();
-    console.log(`🧮 Total sketches to process: ${sketchIds.length}`);
+    logger.log(`🧮 Total sketches to process: ${sketchIds.length}`);
+
+    if(!config.DOWNLOAD_ASSETS){
+        logger.warn(`🚨 Asset downloading is disabled.`);
+    }
+
+    let processedCount = 0;
 
     for (const sketchId of sketchIds) {
         const sketchInfo = await fetchSketchInfo(sketchId);
@@ -101,6 +107,13 @@ const main = async () => {
     
         logger.logSeparator();
         logger.logSketchInfo(sketchInfo);
+
+        // Skip hidden code sketches
+        if (sketchInfo.hiddenCode) {
+            logger.log('🙈 The code for this sketch is not available publicly.');
+            logger.log('👻 Skipping...');
+            continue;
+         }
     
         // Skip forks if configured
         if (sketchInfo.isFork && config.SKIP_FORKS) {
@@ -108,7 +121,8 @@ const main = async () => {
                 logger.lineBreak();
                 logger.logParentInfo(sketchInfo.parent);
                 logger.lineBreak();
-                logger.logMessage(`👻 Skipping fork. This sketch will not be downloaded.`);
+                logger.log(`🔱 This sketch is a fork.`);
+                logger.log('👻 Skipping...');
             }
             continue;
         }
@@ -125,9 +139,10 @@ const main = async () => {
         }
     
         await downloadSketch(sketchInfo);
+        processedCount++; // Increment processedCount after successful download
     }    
 
-    console.log(`\n✅ Downloaded ${sketchIds.length} sketches to ${globals.SAVE_DIR}`);
+    console.log(`\n✅ Downloaded ${processedCount} sketches to ${globals.SAVE_DIR}`); // Use processedCount instead of sketchIds.length
 };
 
 // Execute the main function

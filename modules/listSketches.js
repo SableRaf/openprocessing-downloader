@@ -21,7 +21,7 @@ const collectSketchIds = async () => {
         case 'SEARCH_BY_CURATION_ID':
             return fetchSketchIdsByCuration(config.CURATION_ID, globals.CURATION_URL_BASE);
         case 'SEARCH_BY_SKETCH_ID':
-            logger.logMessage(`🔍 Fetching sketch with ID: ${config.SKETCH_ID}`);
+            logger.log(`🔍 Fetching sketch with ID: ${config.SKETCH_ID}`);
             return [config.SKETCH_ID];
         default:
             console.error(`Invalid mode specified: ${config.SEARCH_MODE}`);

@@ -3,6 +3,30 @@
 const config = require('../config');
 
 /**
+ * Log a regular message.
+ * @param {string} message - Message to log.
+ */
+function log(message) {
+    console.log(message);
+}
+
+/**
+ * Log an error message.
+ * @param {string} message - Error message to log.
+ */
+function error(message) {
+    console.error(message);
+}
+
+/**
+ * Log a warning message.
+ * @param {string} message - Warning message to log.
+ */
+function warn(message) {
+    console.warn(message);
+}
+
+/**
  * Logs metadata information about a sketch.
  * @param {Object} sketchInfo - The sketch information object.
  */
@@ -58,14 +82,6 @@ function logParentInfo(parent) {
 }
 
 /**
- * Log a regular message.
- * @param {string} message - Message to log.
- */
-function logMessage(message) {
-    console.log(message);
-}
-
-/**
  * Logs n number of empty lines.
  * @param {number} length - Number of characters to log.
  */
@@ -99,12 +115,14 @@ function logError(message, error) {
 }
 
 module.exports = {
+    log,
+    error,
+    warn,
     logSketchInfo,
     logCodeParts,
     logAssets,
     logLibraries,
     logParentInfo,
-    logMessage,
     lineBreak,
     logSeparator,
     logError
