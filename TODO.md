@@ -7,7 +7,7 @@
 -[x] Download assets from AWS (using the fileBase URL)
 -[x] Handle sketches with hidden code
 -[x] Do no count sketches for the total downloaded if they are skipped
--[ ] Ask for confirmation before downloading
+-[x] Ask for confirmation before downloading
 -[ ] Search by term sometimes fails silently and returns 0 sketches even though sketches exist.
 -[ ] Add a progress bar
 -[ ] Add support for pagination (for large collections or resuming downloads)
