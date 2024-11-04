@@ -54,14 +54,45 @@ const fetchSketchIdsBySearch = async (searchQuery, searchUrlBase, headless) => {
 
     try {
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
+        await new Promise(resolve => setTimeout(resolve, 5000)); 
+
+        // Click 'Show More' button until all sketches are loaded
+        let loadMore = true;
+        let clickCount = 0; // Initialize click counter
+        while (loadMore) {
+            loadMore = await page.evaluate((selector) => {
+                const showMoreButton = document.querySelector(selector);
+                if (showMoreButton && showMoreButton.classList.contains('show')) {
+                    showMoreButton.click();
+                    return true;
+                }
+                return false;
+            }, globals.SHOW_MORE_SELECTOR);
+
+            if (loadMore) {
+                clickCount++; // Increment click counter
+                process.stdout.write(`\rClicked "Show More" ${clickCount} times, waiting for more sketches to load...`);
+                await new Promise(resolve => setTimeout(resolve, 3000)); // Wait additional time for dynamic content
+            } else {
+                console.log('\nNo more "Show More" button found, proceeding to scrape sketch IDs...');
+            }
+        }
+
+        console.log('All sketches loaded, scraping sketch IDs...');
         const sketchIds = await page.evaluate(() => {
             const links = document.querySelectorAll('a[href^="/sketch/"]');
-            return Array.from(links)
-                .map(link => link.getAttribute('href').match(/\/sketch\/(\d+)/))
-                .filter(Boolean)
-                .map(match => match[1]);
+            const ids = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                const match = href.match(/\/sketch\/(\d+)/);
+                if (match && match[1] && href !== '/sketch/create') {
+                    ids.push(match[1]);
+                }
+            });
+            return [...new Set(ids)]; // Return unique sketch IDs
         });
-        return [...new Set(sketchIds)];
+
+        return sketchIds;
     } catch (error) {
         console.error('😬 Error fetching sketch IDs by search:', error.message);
         return [];
