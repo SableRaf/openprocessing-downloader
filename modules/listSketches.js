@@ -78,7 +78,6 @@ const fetchSketchIdsBySearch = async (searchQuery, searchUrlBase, headless) => {
             }
         }
 
-        console.log('All sketches loaded, scraping sketch IDs...');
         const sketchIds = await page.evaluate(() => {
             const links = document.querySelectorAll('a[href^="/sketch/"]');
             const ids = [];
